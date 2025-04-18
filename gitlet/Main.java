@@ -6,8 +6,9 @@ import gitlet.utils.Add;
 import java.io.IOException;
 import java.util.ArrayList;
 import gitlet.tools.Commit;
-import tools.AllBranches;
+import gitlet.tools.AllBranches;
 import gitlet.tools.CurrentBranchName;
+import gitlet.utils.Commiting;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -31,11 +32,12 @@ public class Main {
                     // we will be displaying all the branches here and currently active branch also
                     ArrayList<Commit> allLeaves = AllBranches.getLeavesCommit();
                     for(Commit commits : allLeaves){
+                        System.out.println(commits.getBranch_name());
                         if(CurrentBranchName.getBranchName().equals(commits.getBranch_name()))System.out.println(commits.getBranch_name()+"*");
                         else System.out.println(commits.getBranch_name());
                     }
                 }
-                if(args.length>2){
+                else if(args.length>2){
                     System.out.println("Bad argumnent ");
                 }
                 else{
@@ -49,8 +51,21 @@ public class Main {
                         }
                     }
                     CurrentBranchName.setBranchName(Bname);
-                    // to add that to allleaved you need to know how to commit
                 }
+                break;
+            case "commit":
+                if(args.length == 1){
+                    System.out.println("Please Enter a Message");
+                    System.exit(0);
+                }
+                else{
+                    String message = "";
+                    for(int i = 1;i< args.length;i++){
+                        message += args[i];
+                    }
+                    Commiting.commit(message);
+                }
+                break;
             default:
                 System.out.println("Please Enter a valid command");
         }

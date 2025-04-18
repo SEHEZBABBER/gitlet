@@ -1,4 +1,4 @@
-package tools;
+package gitlet.tools;
 
 import gitlet.tools.Commit;
 

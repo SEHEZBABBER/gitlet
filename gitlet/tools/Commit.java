@@ -1,11 +1,12 @@
 package gitlet.tools;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 
 import gitlet.tools.CurrentBranchName;
-import tools.AllBranches;
-public class Commit {
+import gitlet.tools.AllBranches;
+public class Commit implements Serializable {
     private String Message;
 
 
@@ -58,7 +59,7 @@ public class Commit {
 
     // initialising parameters
 
-    Commit() {
+    public Commit() {
         this.id = UUID.randomUUID().toString();
         this.branch_name = CurrentBranchName.getBranchName();
         ArrayList<Commit> allLeaves = AllBranches.getLeavesCommit();

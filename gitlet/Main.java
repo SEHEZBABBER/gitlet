@@ -9,6 +9,7 @@ import gitlet.tools.Commit;
 import gitlet.tools.AllBranches;
 import gitlet.tools.CurrentBranchName;
 import gitlet.utils.Commiting;
+import gitlet.utils.Logging;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -31,7 +32,7 @@ public class Main {
                 if(args.length == 1){
                     // we will be displaying all the branches here and currently active branch also
                     ArrayList<Commit> allLeaves = AllBranches.getLeavesCommit();
-                    if(allLeaves.isEmpty()) System.out.println("sadf");
+                    if(allLeaves.isEmpty()) System.out.println("main*");
                     for(Commit commits : allLeaves){
                         System.out.println(commits.getBranch_name());
                         if(CurrentBranchName.getBranchName().equals(commits.getBranch_name()))System.out.println(commits.getBranch_name()+"*");
@@ -66,6 +67,13 @@ public class Main {
                     }
                     Commiting.commit(message);
                 }
+                break;
+            case "log":
+                Logging.log();
+                break;
+            case "checkout":
+                String Bname = args[1];
+                CurrentBranchName.setBranchName(Bname);
                 break;
             default:
                 System.out.println("Please Enter a valid command");

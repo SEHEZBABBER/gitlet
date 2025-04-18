@@ -32,18 +32,25 @@ public class Commiting {
         newcommit.setFiles(files);
         // commit object has been made successfully
         ArrayList<Commit> alleaves = AllBranches.getLeavesCommit();
-        System.out.println(alleaves);
         if(alleaves.isEmpty()){
             // this is first commit
             alleaves.add(newcommit);
+            AllBranches.setLeavesCommit(alleaves);
         }
         int i = 0;
+        int k = 0;
         for(Commit commit : alleaves){
             if(commit.getBranch_name().equals(CurrentBranchName.getBranchName())){
                 alleaves.set(i,newcommit);
+                AllBranches.setLeavesCommit(alleaves);
+                k = 1;
                 break;
             }
             i++;
+        }
+        if(k == 0){
+            alleaves.add(newcommit);
+            AllBranches.setLeavesCommit(alleaves);
         }
     }
 }

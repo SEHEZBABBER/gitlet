@@ -65,6 +65,8 @@ public class Initialise {
         File commits = new File("./.gitlet/commits");
         File blobs = new File("./.gitlet/blobs");
         File StagingArea = new File("./.gitlet/StagingArea");
+        File Branches = new File("./.gitlet/Branches");
+        Branches.mkdir();
         hidden_gitlet.mkdir();
         commits.mkdir();
         blobs.mkdir();

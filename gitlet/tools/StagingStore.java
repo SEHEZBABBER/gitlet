@@ -39,6 +39,10 @@ public class StagingStore {
         try {
             // Ensure .gitlet directory exists
             Files.createDirectories(Paths.get(".gitlet"));
+            // File file = new File("./.gitlet");
+            // if(file!=null) exists
+            // else notexitst
+            // simple version of that
             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(STAGE_FILE_PATH));
             out.writeObject(staged_file);
             out.close();

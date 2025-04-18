@@ -25,7 +25,6 @@ public class Add {
                 System.out.println("Repo not initialised");
             }
             // 3.check if the file is already present
-            System.out.println(StagingStore.getStaged_file());
             if(StagingStore.isstaged(fileName)){
                 System.out.println("File Already Staged");
                 System.exit(0);
@@ -49,5 +48,6 @@ public class Add {
             byte[] content = Files.readAllBytes(source);
             Files.write(filePath,content);
             System.out.println("Staged: " + fileName);
+            System.out.println(StagingStore.getStaged_file());
         }
 }

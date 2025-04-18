@@ -31,6 +31,7 @@ public class Main {
                 if(args.length == 1){
                     // we will be displaying all the branches here and currently active branch also
                     ArrayList<Commit> allLeaves = AllBranches.getLeavesCommit();
+                    if(allLeaves.isEmpty()) System.out.println("sadf");
                     for(Commit commits : allLeaves){
                         System.out.println(commits.getBranch_name());
                         if(CurrentBranchName.getBranchName().equals(commits.getBranch_name()))System.out.println(commits.getBranch_name()+"*");

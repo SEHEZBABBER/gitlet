@@ -32,6 +32,11 @@ public class Commiting {
         newcommit.setFiles(files);
         // commit object has been made successfully
         ArrayList<Commit> alleaves = AllBranches.getLeavesCommit();
+        System.out.println(alleaves);
+        if(alleaves.isEmpty()){
+            // this is first commit
+            alleaves.add(newcommit);
+        }
         int i = 0;
         for(Commit commit : alleaves){
             if(commit.getBranch_name().equals(CurrentBranchName.getBranchName())){

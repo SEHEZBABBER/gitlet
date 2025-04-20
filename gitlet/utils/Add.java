@@ -1,10 +1,12 @@
 package gitlet.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import gitlet.tools.StagingStore;
+import gitlet.tools.Encode;
 
 
 
@@ -39,11 +41,29 @@ public class Add {
                     System.exit(0);
                 }
             }
-            // 5. adding in the staged map
+            // 5. before adding a file to staging area we need to see that if the file is modified or not
+            File[] latestFiles = new File("./.gitlet/latestFiles").listFiles();
+            String hash_latest = "";
+            if(latestFiles.length != 0 && latestFiles != null) {
+                for (File file : latestFiles) {
+                    if (file.getName().equals(fileName)) {
+                        hash_latest = Encode.sha1(file);
+                    }
+                }
+            }
+            File[] workingDirFiles = new File(System.getProperty("user.dir")).listFiles();
+            String hash = "";
+            for(File file : workingDirFiles){
+                if(file.getName().equals(fileName)){
+                    hash = Encode.sha1(file);
+                }
+            }
+            if(hash.equals(hash_latest))System.exit(0);
+            // 6. adding in the staged map
             StagingStore.setStaged_file_file(fileName);
             Path filePath = stagingDir.resolve(fileName);
 
-            // 6. moving the file to the required place
+            // 7. moving the file to the required place
             byte[] content = Files.readAllBytes(source);
             Files.write(filePath,content);
             System.out.println("Staged: " + fileName);

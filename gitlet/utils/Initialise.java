@@ -59,8 +59,8 @@ public class Initialise {
         File[] files_demo = new File(System.getProperty("user.dir")).listFiles();
         for(File file : files_demo){
             if(file.getName().equals(".gitlet")){
-                System.out.println("cant reinit a repo here");
-                System.exit(0);
+                System.out.println("Reintalised a repo here");
+                file.delete();
             }
         }
         CurrentBranchName.setBranchName("main");

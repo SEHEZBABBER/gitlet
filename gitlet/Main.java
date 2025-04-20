@@ -14,6 +14,7 @@ import gitlet.utils.Commiting;
 import gitlet.utils.Logging;
 import gitlet.utils.Checkout;
 import gitlet.utils.Pulling;
+import gitlet.utils.Merging;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -87,6 +88,10 @@ public class Main {
                 // we will be needing a commit id as second argumnet here
                 if(args.length != 2) System.out.println("Pleases Enter a valid commit id");
                 Pulling.pull(args[1]);
+                break;
+            case "merge":
+                if(args.length != 2) System.out.println(" Please Enter a valid branch name ");
+                Merging.merge(args[1]);
                 break;
             default:
                 System.out.println("Please Enter a valid command");

@@ -16,13 +16,23 @@ public class Logging {
                 break;
             }
         }
+        System.out.println(temp);
         while(temp!=null){
             System.out.println("*********************************");
             System.out.println(temp.getId());
             System.out.println(temp.getMessage());
             System.out.println(temp.getBranch_name());
             System.out.println(temp.getNames());
-
+            if(temp.getParents() != null) {
+                if (temp.getParents().size() > 1) {
+                    System.out.print("Merged From : ");
+                    for (Commit commit : temp.getParents()) {
+                        if(commit.getBranch_name().equals(CurrentBranchName.getBranchName()))continue;
+                        System.out.print(commit.getBranch_name() + " ");
+                    }
+                    System.out.println();
+                }
+            }
             if(temp.getParents() != null && !temp.getParents().isEmpty())temp = temp.getParents().get(0);
             else break;
         }

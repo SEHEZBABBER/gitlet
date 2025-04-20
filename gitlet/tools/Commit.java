@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import gitlet.tools.CurrentBranchName;
 import gitlet.tools.AllBranches;
-public class Commit implements Serializable {
+public class Commit implements Serializable{
     private String Message;
 
 

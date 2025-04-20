@@ -44,7 +44,7 @@ public class Add {
             // 5. before adding a file to staging area we need to see that if the file is modified or not
             File[] latestFiles = new File("./.gitlet/latestFiles").listFiles();
             String hash_latest = "";
-            if(latestFiles.length != 0 && latestFiles != null) {
+            if(latestFiles != null && latestFiles.length != 0) {
                 for (File file : latestFiles) {
                     if (file.getName().equals(fileName)) {
                         hash_latest = Encode.sha1(file);

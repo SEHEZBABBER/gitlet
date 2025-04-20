@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import gitlet.tools.MergedFrom;
 
 import gitlet.tools.CommitSerializer;
 
@@ -87,7 +88,12 @@ public class Commiting {
                 alleaves.add(newcommit);
             }
         }
-
+        ArrayList<Commit> merged = MergedFrom.getMergedFrom();
+        ArrayList<Commit> parent = newcommit.getParents();
+        for(Commit commit : merged){
+            parent.add(commit);
+        }
+        newcommit.setParents(parent);
         AllBranches.setLeavesCommit(alleaves);
 
         // After commit, serialize the full commit tree

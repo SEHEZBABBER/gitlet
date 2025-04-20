@@ -13,6 +13,7 @@ import gitlet.tools.CurrentBranchName;
 import gitlet.utils.Commiting;
 import gitlet.utils.Logging;
 import gitlet.utils.Checkout;
+import gitlet.utils.Pulling;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -81,6 +82,11 @@ public class Main {
                 break;
             case "checkout":
                 Checkout.checkout(args[1]);
+                break;
+            case "pull":
+                // we will be needing a commit id as second argumnet here
+                if(args.length != 2) System.out.println("Pleases Enter a valid commit id");
+                Pulling.pull(args[1]);
                 break;
             default:
                 System.out.println("Please Enter a valid command");

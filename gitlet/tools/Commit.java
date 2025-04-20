@@ -2,6 +2,8 @@ package gitlet.tools;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import gitlet.tools.CurrentBranchName;
@@ -16,6 +18,16 @@ public class Commit implements Serializable {
     private ArrayList<byte[]> files = new ArrayList<byte[]>();
     private ArrayList<Commit> parents = new ArrayList<Commit>();
     private ArrayList<String> names = new ArrayList<>();
+
+    public Map<String,byte[]> getFiles_content() {
+        return files_content;
+    }
+
+    public void setFiles_content(Map<String,byte[]> files_content) {
+        this.files_content = files_content;
+    }
+
+    private Map<String,byte[]> files_content= new HashMap<String,byte[]>();
 
     public ArrayList<String> getNames() {
         return names;

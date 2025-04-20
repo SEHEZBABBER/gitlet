@@ -11,6 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+
 import gitlet.tools.CommitSerializer;
 
 public class Commiting {
@@ -44,6 +46,7 @@ public class Commiting {
         ArrayList<byte[]> files = new ArrayList<>();
         File[] Sfiles = staged_files.listFiles();
         ArrayList<String> name = newcommit.getNames();
+        Map<String,byte[]> temp = newcommit.getFiles_content();
 
         if (Sfiles != null) {
             for (File file : Sfiles) {
@@ -51,6 +54,7 @@ public class Commiting {
                     if (name == null) name = new ArrayList<>();
                     name.add(file.getName());
                     byte[] bytes = Files.readAllBytes(Path.of(file.getPath()));
+                    temp.put(file.getName(),bytes);
                     files.add(bytes);
                     Path filePath = latestFiles.toPath().resolve(file.getName());
                     Files.write(filePath,bytes);
@@ -63,6 +67,7 @@ public class Commiting {
 
         newcommit.setFiles(files);
         newcommit.setNames(name);
+        newcommit.setFiles_content(temp);
 
         ArrayList<Commit> alleaves = AllBranches.getLeavesCommit();
 

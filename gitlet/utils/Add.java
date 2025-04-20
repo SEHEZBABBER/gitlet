@@ -1,6 +1,5 @@
 package gitlet.utils;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,7 +40,7 @@ public class Add {
                 }
             }
             // 5. adding in the staged map
-            StagingStore.setStaged_file(fileName);
+            StagingStore.setStaged_file_file(fileName);
             Path filePath = stagingDir.resolve(fileName);
 
             // 6. moving the file to the required place

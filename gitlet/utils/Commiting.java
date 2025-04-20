@@ -1,56 +1,93 @@
 package gitlet.utils;
 
 import gitlet.tools.Commit;
+import gitlet.tools.AllBranches;
+import gitlet.tools.CurrentBranchName;
+import gitlet.tools.StagingStore;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import gitlet.tools.AllBranches;
-import gitlet.tools.CurrentBranchName;
+import java.util.HashMap;
+import gitlet.tools.CommitSerializer;
 
 public class Commiting {
+
+    private static void clearStage() {
+        File stage = new File("./.gitlet/StagingArea");
+        File[] staged_files = stage.listFiles();
+        if (staged_files != null) {
+            for (File file : staged_files) {
+                file.delete();
+            }
+        }
+        StagingStore.setStaged_file(new HashMap<>());
+        File temp_file = new File("./.gitlet/stage.ser");
+        if(temp_file.exists())temp_file.delete();
+    }
+
     public static void commit(String message) {
+        // now at commit we should store the latest snapshot of all the files in a folder it will be helpful in many things
+        File latestFiles = new File("./.gitlet/latestFiles");
+        if(!latestFiles.exists())latestFiles.mkdir();
         Commit newcommit = new Commit();
         newcommit.setMessage(message);
+
         File staged_files = new File("./.gitlet/StagingArea");
-        if(staged_files == null){
-            System.out.println("Initialise the repo first");
+        if (!staged_files.exists()) {
+            System.out.println("Initialize the repo first");
+            return;
         }
+
         ArrayList<byte[]> files = new ArrayList<>();
         File[] Sfiles = staged_files.listFiles();
-        for(File file : Sfiles){
-            try {
-                byte[] bytes = Files.readAllBytes(Path.of("./.gitlet/StagingArea/"+file.getName()));
-                files.add(bytes);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        ArrayList<String> name = newcommit.getNames();
+
+        if (Sfiles != null) {
+            for (File file : Sfiles) {
+                try {
+                    if (name == null) name = new ArrayList<>();
+                    name.add(file.getName());
+                    byte[] bytes = Files.readAllBytes(Path.of(file.getPath()));
+                    files.add(bytes);
+                    Path filePath = latestFiles.toPath().resolve(file.getName());
+                    Files.write(filePath,bytes);
+                    // copy the file in the latest area as well if not exists if exists override it
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
+
         newcommit.setFiles(files);
-        // commit object has been made successfully
+        newcommit.setNames(name);
+
         ArrayList<Commit> alleaves = AllBranches.getLeavesCommit();
-        if(alleaves.isEmpty()){
-            // this is first commit
+
+
+        if (alleaves.isEmpty()) {
             alleaves.add(newcommit);
-            AllBranches.setLeavesCommit(alleaves);
-        }
-        int i = 0;
-        int k = 0;
-        for(Commit commit : alleaves){
-            if(commit.getBranch_name().equals(CurrentBranchName.getBranchName())){
-                alleaves.set(i,newcommit);
-                AllBranches.setLeavesCommit(alleaves);
-                k = 1;
-                break;
+        } else {
+            boolean updated = false;
+            for (int i = 0; i < alleaves.size(); i++) {
+                if (alleaves.get(i).getBranch_name().equals(CurrentBranchName.getBranchName())) {
+                    alleaves.set(i, newcommit);
+                    updated = true;
+                    break;
+                }
             }
-            i++;
+            if (!updated) {
+                alleaves.add(newcommit);
+            }
         }
-        if(k == 0){
-            alleaves.add(newcommit);
-            AllBranches.setLeavesCommit(alleaves);
-        }
+
+        AllBranches.setLeavesCommit(alleaves);
+
+        // After commit, serialize the full commit tree
+        CommitSerializer.serializeCommitTree();
+
+        clearStage();
     }
 }

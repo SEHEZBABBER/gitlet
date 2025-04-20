@@ -21,8 +21,10 @@ public class StagingStore {
     public static Map<String, String> getStaged_file() {
         return staged_file;
     }
-
-    public static void setStaged_file(String fileName) throws IOException {
+    public static void setStaged_file(Map<String,String> temp){
+        staged_file = temp;
+    }
+    public static void setStaged_file_file(String fileName) throws IOException {
         Path workingDir = Paths.get(System.getProperty("user.dir"));
         Path source = workingDir.resolve(fileName);
         byte[] content = Files.readAllBytes(source);
@@ -32,6 +34,7 @@ public class StagingStore {
     }
 
     public static boolean isstaged(String fileName) {
+        System.out.println(staged_file);
         return staged_file.containsKey(fileName);
     }
 

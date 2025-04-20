@@ -20,8 +20,11 @@ public class Logging {
             System.out.println("*********************************");
             System.out.println(temp.getId());
             System.out.println(temp.getMessage());
-            System.out.println("*********************************");
-            temp = temp.getParents().get(0);
+            System.out.println(temp.getBranch_name());
+            System.out.println(temp.getNames());
+
+            if(temp.getParents() != null && !temp.getParents().isEmpty())temp = temp.getParents().get(0);
+            else break;
         }
     }
 }

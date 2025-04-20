@@ -58,7 +58,6 @@ public class Initialise {
     public static void init(){
         File[] files_demo = new File(System.getProperty("user.dir")).listFiles();
         for(File file : files_demo){
-//            System.out.println(file.getName());
             if(file.getName().equals(".gitlet")){
                 System.out.println("cant reinit a repo here");
                 System.exit(0);
@@ -67,13 +66,11 @@ public class Initialise {
         CurrentBranchName.setBranchName("main");
         File hidden_gitlet = new File("./.gitlet");
         File commits = new File("./.gitlet/commits");
-        File blobs = new File("./.gitlet/blobs");
         File StagingArea = new File("./.gitlet/StagingArea");
         File Branches = new File("./.gitlet/Branches");
         Branches.mkdir();
         hidden_gitlet.mkdir();
         commits.mkdir();
-        blobs.mkdir();
         StagingArea.mkdir();
         File gitIgnore = new File("./.gitlet/.gitletignore");
         try {

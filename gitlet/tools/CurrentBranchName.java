@@ -3,7 +3,7 @@ package gitlet.tools;
 import java.io.*;
 
 public class CurrentBranchName {
-    private static final String BRANCH_FILE_PATH = ".gitlet/Branched/branch.ser";
+    private static final String BRANCH_FILE_PATH = ".gitlet/Branches/branch.ser";
     private static String BranchName;
 
     // Load branch name when class is loaded
@@ -22,7 +22,7 @@ public class CurrentBranchName {
 
     private static void saveBranchName() {
         try {
-            File dir = new File(".gitlet/Branched");
+            File dir = new File(".gitlet/Branches");
             if (!dir.exists()) {
                 dir.mkdirs(); // create folder if not present
             }

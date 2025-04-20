@@ -15,6 +15,16 @@ public class Commit implements Serializable {
     // file array
     private ArrayList<byte[]> files = new ArrayList<byte[]>();
     private ArrayList<Commit> parents = new ArrayList<Commit>();
+    private ArrayList<String> names = new ArrayList<>();
+
+    public ArrayList<String> getNames() {
+        return names;
+    }
+
+    public void setNames(ArrayList<String> names) {
+        this.names = names;
+    }
+
     public String getMessage() {
         return Message;
     }

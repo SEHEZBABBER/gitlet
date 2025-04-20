@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class AllBranches {
-    private static final String LEAVES_FILE_PATH = ".gitlet/Branched/leaves.ser";
+    private static final String LEAVES_FILE_PATH = ".gitlet/Branches/leaves.ser";
     private static ArrayList<Commit> LeavesCommit;
 
     static {
@@ -24,7 +24,7 @@ public class AllBranches {
 
     private static void saveLeaves() {
         try {
-            File dir = new File(".gitlet/Branched");
+            File dir = new File(".gitlet/Branches");
             if (!dir.exists()) {
                 dir.mkdirs(); // create directory if it doesn't exist
             }

@@ -3,18 +3,20 @@ package gitlet.utils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
 import gitlet.tools.Encode;
 
 import gitlet.tools.GitIgnoreSet;
+import gitlet.tools.Commit;
+import gitlet.tools.AllBranches;
+import gitlet.tools.CurrentBranchName;
 
 public class Status {
     public static void getStatus() throws IOException {
         ArrayList<String> UntackedFiles = new ArrayList<>();
         ArrayList<String> ModifiedFiles = new ArrayList<>();
-        ArrayList<String> deletedFiles = new ArrayList<>();
+        Set<String> deletedFiles = new HashSet<>();
 
         File Staged = new File("./.gitlet/StagingArea");
         File[] FilesStaged = Staged.listFiles();
@@ -80,27 +82,33 @@ public class Status {
                 }
             }
         }
-        for(String key : workingHash.keySet()){
-            if(!latestHash.containsKey(key)) System.out.println(key);
-        }
         if(!ModifiedFiles.isEmpty()) {
             for (String name : ModifiedFiles) {
                 System.out.println(name);
             }
         }
         System.out.println("==========================> Deleted Files <==========================");
-        // get all the files that are modified
-        if(LatestFiles != null) {
-            for (File file : LatestFiles) {
-                deletedFiles.add(file.getName());
-            }
+        File[] userDir = new File(System.getProperty("user.dir")).listFiles();
+
+
+        Commit temp_commit = null;
+        ArrayList<Commit> allleaves = AllBranches.getLeavesCommit();
+        for(Commit commit : allleaves){
+            if(commit.getBranch_name().equals(CurrentBranchName.getBranchName()))temp_commit = commit;
         }
-        if(WorkingDir != null) {
-            for (File file : WorkingDir) {
-                deletedFiles.remove(file.getName());
+        while(temp_commit != null){
+            ArrayList<String> names = temp_commit.getNames();
+            for(String name : names){
+                deletedFiles.add(name);
             }
+            if(temp_commit.getParents() == null || temp_commit.getParents().isEmpty())temp_commit = null;
+            else temp_commit = temp_commit.getParents().get(0);
         }
-        if(!deletedFiles.isEmpty()) {
+        for(File file : userDir){
+            if(temp.contains(file.getName()))continue;
+            deletedFiles.remove(file.getName());
+        }
+        if(deletedFiles!=null) {
             for (String name : deletedFiles) {
                 System.out.println(name);
             }

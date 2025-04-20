@@ -43,9 +43,12 @@ public class Commiting {
             System.out.println("Initialize the repo first");
             return;
         }
-
         ArrayList<byte[]> files = new ArrayList<>();
         File[] Sfiles = staged_files.listFiles();
+        if(Sfiles.length == 0){
+            System.out.println("Nothing to Commit");
+            System.exit(0);
+        }
         ArrayList<String> name = newcommit.getNames();
         Map<String,byte[]> temp = newcommit.getFiles_content();
 

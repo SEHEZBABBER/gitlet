@@ -48,11 +48,13 @@ function Home() {
 
   const fetchUserRepos = () => {
     // Mock data - replace with actual API call
-    setUserRepos([
-      { id: 1, name: "my-project", updated_at: "2025-04-25", stars: 5 },
-      { id: 2, name: "awesome-app", updated_at: "2025-04-20", stars: 12 },
-      { id: 3, name: "react-demo", updated_at: "2025-04-15", stars: 8 },
-    ]);
+    axios.get("http://localhost:8080/getrepos",{withCredentials:true})
+    .then((res)=>{
+      setUserRepos(res.data.message);
+    })
+    .catch((err)=>{
+      console.log(err);
+    })
   };
 
   const fetchPublicRepos = () => {
@@ -183,7 +185,7 @@ function Home() {
             style={{ minHeight: "calc(100vh - 56px)" }}
           >
             <div className="d-flex justify-content-between align-items-center mb-3">
-              <h5 className="mb-0">My Repositories</h5>
+              <h5 className="mb-0" onClick={()=>navigate("/myrepos")} style={{cursor:"pointer"}}>My Repositories</h5>
               <button
                 className="btn btn-sm btn-success"
                 onClick={ViewNew}
@@ -195,11 +197,11 @@ function Home() {
             <ul className="list-group list-group-flush">
               {userRepos.map((repo) => (
                 <li
-                  key={repo.id}
+                  key={repo._id}
                   className="list-group-item bg-light border-0 ps-0 py-2"
                 >
                   <Link
-                    to={`/repo/${repo.id}`}
+                    to={`/repo/${repo._id}`}
                     className="text-decoration-none"
                   >
                     <i className="bi bi-book me-2"></i>

@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 function NewRepo() {
   const [repoName, setRepoName] = useState('');
   const [description, setDescription] = useState('');
+  const [username,setusername] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -17,6 +18,15 @@ function NewRepo() {
       console.log(err);
     })
   };
+  useEffect(()=>{
+    axios.get("http://localhost:8080/getusername",{withCredentials:true})
+    .then((res)=>{
+      setusername(res.data.username);
+    })
+    .catch((err)=>{
+      console.log(err);
+    })
+  },[]);
 
   return (
     <div className="container mt-5" style={{ maxWidth: '900px' }}>
@@ -29,7 +39,7 @@ function NewRepo() {
         <div className="mb-4">
           <label htmlFor="owner" className="form-label">Owner</label>
           <div className="input-group">
-            <span className="input-group-text bg-light">YourUsername</span>
+            <span className="input-group-text bg-light">{username}</span>
             <span className="input-group-text">/</span>
             <input 
               type="text" 

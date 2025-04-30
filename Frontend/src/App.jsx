@@ -9,6 +9,7 @@ import Commits from "./Pages/Commits";
 import NewRepo from "./Pages/NewRepo";
 import Repo from "./Pages/Repo";
 import Profile from "./Pages/Profile";
+import MyRepos from "./Pages/MyRepos";
 function App() {
   return (
     <>
@@ -23,6 +24,7 @@ function App() {
           <Route element={<NewRepo/>} path="/new"/>
           <Route element={<Profile/>} path="/profile"/>
           <Route element={<Repo/>} path="/repo"/>
+          <Route element={<MyRepos/>} path="/myrepos"/>
         </Routes>
       </BrowserRouter>
     </>

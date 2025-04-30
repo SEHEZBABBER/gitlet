@@ -62,7 +62,7 @@ app.post("/login",async(req,res)=>{
         if(!UserFromDb)return res.status(400).json({error:"User does not exists"});
         const isPasswordCorrect = await bcrypt.compare(password,UserFromDb.password);
         if(isPasswordCorrect){
-            const token = jwt.sign({email:email},"MY SUPER SECRET KEY",{expiresIn : "2d"});
+            const token = jwt.sign({email:email,username:UserFromDb.username},"MY SUPER SECRET KEY",{expiresIn : "2d"});
             res.cookie("token", token, {
                 httpOnly: true, 
                 secure: false,  
@@ -90,7 +90,7 @@ app.post("/register",async(req,res)=>{
         const newUser = new UsersModel({username : username,email : email,password : hash , Repos : []});
         await newUser.save();
         // we also have to logge in the user so we will need to save the jwt generated from email in the cookies
-        const token = jwt.sign({email:email},"MY SUPER SECRET KEY",{expiresIn : "2d"});
+        const token = jwt.sign({email:email,usernmae:username},"MY SUPER SECRET KEY",{expiresIn : "2d"});
         res.cookie("token", token, {
             httpOnly: true, 
             secure: false,  
@@ -162,3 +162,12 @@ app.post("/newRepo", async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 });
+app.get('/getrepos',async(req,res)=>{
+  const userEmail = jwt.verify(req.cookies.token,"MY SUPER SECRET KEY").email;
+  const user = await UsersModel.findOne({email : userEmail}).populate("Repos");
+  return res.status(200).json({message:user.Repos});
+});
+app.get('/getusername',async(req,res)=>{
+  const username = jwt.verify(req.cookies.token,"MY SUPER SECRET KEY").username;
+  return res.status(200).json({username:username});
+})

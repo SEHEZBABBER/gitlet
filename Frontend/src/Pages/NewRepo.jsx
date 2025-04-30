@@ -5,6 +5,7 @@ function NewRepo() {
   const [repoName, setRepoName] = useState('');
   const [description, setDescription] = useState('');
   const [username,setusername] = useState('');
+  const [error,seterror] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -15,6 +16,7 @@ function NewRepo() {
       navigate("/home");
     })
     .catch((err)=>{
+      seterror(err.response.data.message);
       console.log(err);
     })
   };
@@ -47,7 +49,10 @@ function NewRepo() {
               id="repoName" 
               placeholder="repository-name" 
               value={repoName}
-              onChange={(e) => setRepoName(e.target.value)}
+              onChange={(e) => {
+                setRepoName(e.target.value);
+                seterror('');
+              }}
               required
             />
           </div>
@@ -60,9 +65,12 @@ function NewRepo() {
             className="form-control" 
             id="description" 
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => {
+              setDescription(e.target.value);
+            }}
           />
         </div>
+        {error ? (<p style={{color:"red"}}>{error}</p>) : (<p></p>) }
         <div className="d-grid">
           <button type="submit" className="btn btn-success">Create repository</button>
         </div>

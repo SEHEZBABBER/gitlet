@@ -90,7 +90,7 @@ app.post("/register",async(req,res)=>{
         const newUser = new UsersModel({username : username,email : email,password : hash , Repos : []});
         await newUser.save();
         // we also have to logge in the user so we will need to save the jwt generated from email in the cookies
-        const token = jwt.sign({email:email,usernmae:username},"MY SUPER SECRET KEY",{expiresIn : "2d"});
+        const token = jwt.sign({email:email,username:username},"MY SUPER SECRET KEY",{expiresIn : "2d"});
         res.cookie("token", token, {
             httpOnly: true, 
             secure: false,  
@@ -170,4 +170,18 @@ app.get('/getrepos',async(req,res)=>{
 app.get('/getusername',async(req,res)=>{
   const username = jwt.verify(req.cookies.token,"MY SUPER SECRET KEY").username;
   return res.status(200).json({username:username});
+})
+app.get('/getallrepos',async(req,res)=>{
+  const repos = await Repo.find({});
+  return res.status(200).json({message:repos});
+});
+app.get('/search',async(req,res)=>{
+  let searched_for = req.query.q;
+  let repos = await Repo.find({});
+  let arr = [];
+  for(let i = 0;i<repos.length;i++){
+    if(repos[i].name.includes(searched_for))arr.push(repos[i]);
+    else if(repos[i].owner.includes(searched_for))arr.push(repos[i]);
+  }
+  res.status(200).json({message:arr});
 })

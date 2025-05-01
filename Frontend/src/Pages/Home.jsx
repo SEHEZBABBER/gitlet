@@ -8,37 +8,76 @@ function Home() {
   const [userRepos, setUserRepos] = useState([]);
   const [publicRepos, setPublicRepos] = useState([]);
   const [username, setUsername] = useState("");
-  function ViewNew(){
+  const [userPage, setUserPage] = useState(1);
+  const [publicPage, setPublicPage] = useState(1);
+  const [serached,setsearched] = useState("");
+  const reposPerPage = 5;
+
+  function sort_random(arr) {
+    // Simple hash function to convert array content into a seed
+    const seed = hashArray(arr);
+    const rng = mulberry32(seed);
+  
+    const result = [...arr];
+    // Fisher-Yates Shuffle using deterministic RNG
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+  
+    return result;
+  }
+  
+  // Hash function to create a numeric seed from the array
+  function hashArray(arr) {
+    const str = JSON.stringify(arr);
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash << 5) - hash + str.charCodeAt(i);
+      hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+  }
+  
+  // Deterministic pseudo-random number generator (PRNG)
+  function mulberry32(seed) {
+    return function() {
+      seed |= 0;
+      seed = seed + 0x6D2B79F5 | 0;
+      let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  
+  function ViewNew() {
     navigate("/new");
   }
-  function ViewProfile(){
+
+  function ViewProfile() {
     navigate("/profile");
   }
+
   useEffect(() => {
-    // Check authentication
     axios
       .get("http://localhost:8080/home", { withCredentials: true })
       .then((res) => {
-        console.log(res);
         if (res.data.user) {
           setUsername(res.data.user.username || "User");
         }
-        // Fetch user repositories
         fetchUserRepos();
-        // Fetch public repositories
         fetchPublicRepos();
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
         alert("You're not authorized to access this page");
         navigate("/");
       });
   }, [navigate]);
+
   function handleLogout() {
     axios
       .get("http://localhost:8080/logout", { withCredentials: true })
-      .then((res) => {
-        console.log(res);
+      .then(() => {
         navigate("/");
       })
       .catch((err) => {
@@ -47,62 +86,57 @@ function Home() {
   }
 
   const fetchUserRepos = () => {
-    // Mock data - replace with actual API call
-    axios.get("http://localhost:8080/getrepos",{withCredentials:true})
+    axios
+      .get("http://localhost:8080/getrepos", { withCredentials: true })
+      .then((res) => {
+        setUserRepos(res.data.message);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const fetchPublicRepos = () => {
+    axios
+      .get("http://localhost:8080/getallrepos")
+      .then((res) => {
+        let arr = sort_random(res.data.message);
+        setPublicRepos(arr);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  function handleSubmit(e){
+    e.preventDefault();
+    axios.get(`http://localhost:8080/search?q=${serached}`)
     .then((res)=>{
-      setUserRepos(res.data.message);
+      let arr = sort_random(res.data.message);
+      setPublicRepos(arr);
     })
     .catch((err)=>{
       console.log(err);
     })
-  };
+  }
 
-  const fetchPublicRepos = () => {
-    // Mock data - replace with actual API call
-    setPublicRepos([
-      {
-        id: 101,
-        name: "tensorflow",
-        owner: "google",
-        description: "An open source machine learning framework",
-        stars: 178000,
-        updated_at: "2025-04-27",
-      },
-      {
-        id: 102,
-        name: "react",
-        owner: "facebook",
-        description: "A JavaScript library for building user interfaces",
-        stars: 205000,
-        updated_at: "2025-04-26",
-      },
-      {
-        id: 103,
-        name: "vscode",
-        owner: "microsoft",
-        description: "Visual Studio Code",
-        stars: 152000,
-        updated_at: "2025-04-25",
-      },
-      {
-        id: 104,
-        name: "bootstrap",
-        owner: "twbs",
-        description: "The most popular HTML, CSS, and JavaScript framework",
-        stars: 165000,
-        updated_at: "2025-04-24",
-      },
-    ]);
-  };
+  // Pagination Logic
+  const indexOfLastUserRepo = userPage * reposPerPage;
+  const indexOfFirstUserRepo = indexOfLastUserRepo - reposPerPage;
+  const currentUserRepos = userRepos.slice(indexOfFirstUserRepo, indexOfLastUserRepo);
 
+  const indexOfLastPublicRepo = publicPage * reposPerPage;
+  const indexOfFirstPublicRepo = indexOfLastPublicRepo - reposPerPage;
+  const currentPublicRepos = publicRepos.slice(indexOfFirstPublicRepo, indexOfLastPublicRepo);
+
+  const totalUserPages = Math.ceil(userRepos.length / reposPerPage);
+  const totalPublicPages = Math.ceil(publicRepos.length / reposPerPage);
 
   return (
     <div className="container-fluid p-0">
       {/* Navbar */}
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-3">
         <Link className="navbar-brand" to="/home">
-          <i className="bi bi-git me-2"></i>
-          GitLet
+          <i className="bi bi-git me-2"></i>GitLet
         </Link>
         <button
           className="navbar-toggler"
@@ -113,45 +147,28 @@ function Home() {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
-          <form className="d-flex mx-auto" style={{ maxWidth: "1200px" }}>
+          <form className="d-flex mx-auto" style={{ maxWidth: "1200px" }} onSubmit={(e)=>handleSubmit(e)}>
             <input
               className="form-control me-2"
               type="search"
               placeholder="Search repositories"
-              style={{width:"75vw"}}
+              style={{ width: "75vw" }}
+              onChange={(e)=>setsearched(e.target.value)}
             />
           </form>
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-            <button
+              <button
                 onClick={ViewNew}
-                style={{
-                  backgroundColor: "#1a2526", // Dark background similar to the image
-                  color: "#ffffff", // White text
-                  textShadow: "1px 0 red, -1px 0 blue, 0 1px green", // Glitchy outline effect
-                  fontFamily: "Arial, sans-serif", // Standard font (adjust if needed)
-                  padding: "5px 10px", // Padding for spacing
-                  border: "none", // No border (the image doesn't show a visible border)
-                  borderRadius: "0", // Sharp edges (no rounded corners)
-                  cursor: "pointer", // Pointer cursor on hover
-                }}
+                style={buttonStyle}
               >
                 New Repo
               </button>
             </li>
             <li className="nav-item">
-            <button
+              <button
                 onClick={ViewProfile}
-                style={{
-                  backgroundColor: "#1a2526", // Dark background similar to the image
-                  color: "#ffffff", // White text
-                  textShadow: "1px 0 red, -1px 0 blue, 0 1px green", // Glitchy outline effect
-                  fontFamily: "Arial, sans-serif", // Standard font (adjust if needed)
-                  padding: "5px 10px", // Padding for spacing
-                  border: "none", // No border (the image doesn't show a visible border)
-                  borderRadius: "0", // Sharp edges (no rounded corners)
-                  cursor: "pointer", // Pointer cursor on hover
-                }}
+                style={buttonStyle}
               >
                 Profile
               </button>
@@ -159,16 +176,7 @@ function Home() {
             <li className="nav-item">
               <button
                 onClick={handleLogout}
-                style={{
-                  backgroundColor: "#1a2526", // Dark background similar to the image
-                  color: "#ffffff", // White text
-                  textShadow: "1px 0 red, -1px 0 blue, 0 1px green", // Glitchy outline effect
-                  fontFamily: "Arial, sans-serif", // Standard font (adjust if needed)
-                  padding: "5px 10px", // Padding for spacing
-                  border: "none", // No border (the image doesn't show a visible border)
-                  borderRadius: "0", // Sharp edges (no rounded corners)
-                  cursor: "pointer", // Pointer cursor on hover
-                }}
+                style={buttonStyle}
               >
                 Logout
               </button>
@@ -179,75 +187,52 @@ function Home() {
 
       <div className="container-fluid">
         <div className="row">
-          {/* Left sidebar - Repository list */}
-          <div
-            className="col-md-3 col-lg-2 border-end p-3 bg-light"
-            style={{ minHeight: "calc(100vh - 56px)" }}
-          >
+          {/* Sidebar - User Repos */}
+          <div className="col-md-3 col-lg-2 border-end p-3 bg-light" style={{ minHeight: "calc(100vh - 56px)" }}>
             <div className="d-flex justify-content-between align-items-center mb-3">
-              <h5 className="mb-0" onClick={()=>navigate("/myrepos")} style={{cursor:"pointer"}}>My Repositories</h5>
-              <button
-                className="btn btn-sm btn-success"
-                onClick={ViewNew}
-                title="Create new repository"
-              >
-                New
-              </button>
+              <h5 className="mb-0" onClick={() => navigate("/myrepos")} style={{ cursor: "pointer" }}>My Repositories</h5>
+              <button className="btn btn-sm btn-success" onClick={ViewNew} title="Create new repository">New</button>
             </div>
             <ul className="list-group list-group-flush">
-              {userRepos.map((repo) => (
-                <li
-                  key={repo._id}
-                  className="list-group-item bg-light border-0 ps-0 py-2"
-                >
-                  <Link
-                    to={`/repo/${repo._id}`}
-                    className="text-decoration-none"
-                  >
+              {currentUserRepos.map((repo) => (
+                <li key={repo._id} className="list-group-item bg-light border-0 ps-0 py-2">
+                  <Link to={`/repo/${repo._id}`} className="text-decoration-none">
                     <i className="bi bi-book me-2"></i>
                     {repo.name}
                   </Link>
                 </li>
               ))}
             </ul>
+            <div className="mt-2">
+              <button className="btn btn-sm btn-outline-secondary me-1" disabled={userPage === 1} onClick={() => setUserPage(userPage - 1)}>Prev</button>
+              <button className="btn btn-sm btn-outline-secondary" disabled={userPage === totalUserPages} onClick={() => setUserPage(userPage + 1)}>Next</button>
+            </div>
           </div>
 
           {/* Main content - Public repos */}
           <div className="col-md-9 col-lg-10 py-4">
             <div className="container">
               <h3 className="mb-4">Discover Public Repositories</h3>
-
               <div className="list-group">
-                {publicRepos.map((repo) => (
-                  <div
-                    key={repo.id}
-                    className="list-group-item border-start-0 border-end-0 py-3"
-                  >
+                {currentPublicRepos.map((repo) => (
+                  <div key={repo.id} className="list-group-item border-start-0 border-end-0 py-3">
                     <div className="d-flex justify-content-between align-items-center">
                       <div>
                         <h5 className="mb-1">
-                          <Link
-                            to={`/repo/${repo.id}`}
-                            className="text-decoration-none"
-                          >
-                            {repo.owner}/{repo.name}
+                          <Link to={`/repo/${repo.id}`} className="text-decoration-none">
+                            <span>Owner: {repo.owner}</span><br />
+                            <span>Repo Name: {repo.name}</span>
                           </Link>
                         </h5>
-                        <p className="mb-1 text-muted">{repo.description}</p>
-                      </div>
-                      <div className="text-nowrap ms-3">
-                        <span className="badge bg-secondary me-2">
-                          <i className="bi bi-star me-1"></i>
-                          {repo.stars.toLocaleString()}
-                        </span>
-                        <small className="text-muted">
-                          Updated{" "}
-                          {new Date(repo.updated_at).toLocaleDateString()}
-                        </small>
+                        <p className="mb-1 text-muted">Description: {repo.description}</p>
                       </div>
                     </div>
                   </div>
                 ))}
+              </div>
+              <div className="mt-3">
+                <button className="btn btn-sm btn-outline-secondary me-2" disabled={publicPage === 1} onClick={() => setPublicPage(publicPage - 1)}>Prev</button>
+                <button className="btn btn-sm btn-outline-secondary" disabled={publicPage === totalPublicPages} onClick={() => setPublicPage(publicPage + 1)}>Next</button>
               </div>
             </div>
           </div>
@@ -256,5 +241,16 @@ function Home() {
     </div>
   );
 }
+
+const buttonStyle = {
+  backgroundColor: "#1a2526",
+  color: "#ffffff",
+  textShadow: "1px 0 red, -1px 0 blue, 0 1px green",
+  fontFamily: "Arial, sans-serif",
+  padding: "5px 10px",
+  border: "none",
+  borderRadius: "0",
+  cursor: "pointer",
+};
 
 export default Home;

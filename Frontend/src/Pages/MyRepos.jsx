@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate } from 'react-router-dom';
 
 function MyRepos() {
   const [repos, setRepos] = useState([]);
-
+  const naviage = useNavigate();
   useEffect(() => {
     axios.get("http://localhost:8080/getrepos", { withCredentials: true })
       .then((res) => {
         setRepos(res.data.message);
       })
       .catch((err) => {
-        console.log(err);
+        alert("you're not authorised to access this page");
+        navigate("/");
       });
   }, []);
 

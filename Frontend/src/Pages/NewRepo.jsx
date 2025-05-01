@@ -23,10 +23,12 @@ function NewRepo() {
   useEffect(()=>{
     axios.get("http://localhost:8080/getusername",{withCredentials:true})
     .then((res)=>{
+      console.log(res);
       setusername(res.data.username);
     })
-    .catch((err)=>{
-      console.log(err);
+    .catch(()=>{
+      alert("You're not authroised to access this page");
+      navigate("/");
     })
   },[]);
 

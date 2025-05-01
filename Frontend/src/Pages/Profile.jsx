@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Profile() {
     const [username,setusername] = useState('');
     const [repos, setRepos] = useState([]);
-
+    const navigate = useNavigate();
     useEffect(() => {
         axios.get("http://localhost:8080/getusername",{withCredentials:true})
         .then((res)=>{
             setusername(res.data.username);
         })
-        .catch((err)=>{
-            console.log(err);
+        .catch(()=>{
+            alert("you're not authorised to access this page");
+            navigate("/");
         })
         axios.get("http://localhost:8080/getrepos",{withCredentials:true})
         .then((res)=>{

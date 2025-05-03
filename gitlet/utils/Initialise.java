@@ -43,7 +43,9 @@ public class Initialise {
                     "*.bak",
                     "*.cache",
                     ".git",
-                    "gitlet"
+                    "gitlet",
+                    "lib",
+                    "out"
             ));
         try {
             FileWriter writer = new FileWriter("./.gitlet/.gitletignore");

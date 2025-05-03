@@ -15,6 +15,7 @@ import gitlet.utils.Logging;
 import gitlet.utils.Checkout;
 import gitlet.utils.Pulling;
 import gitlet.utils.Merging;
+import gitlet.utils.Pushing;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -92,6 +93,10 @@ public class Main {
             case "merge":
                 if(args.length != 2) System.out.println(" Please Enter a valid branch name ");
                 Merging.merge(args[1]);
+                break;
+            case "push":
+                String repoId = args[1];
+                Pushing.push(repoId);
                 break;
             default:
                 System.out.println("Please Enter a valid command");

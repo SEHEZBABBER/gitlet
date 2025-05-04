@@ -18,6 +18,7 @@ public class Commit implements Serializable{
     private ArrayList<byte[]> files = new ArrayList<byte[]>();
     private ArrayList<Commit> parents = new ArrayList<Commit>();
     private ArrayList<String> names = new ArrayList<>();
+    private Map<String,byte[]> files_content= new HashMap<String,byte[]>();
 
     public Map<String,byte[]> getFiles_content() {
         return files_content;
@@ -27,7 +28,6 @@ public class Commit implements Serializable{
         this.files_content = files_content;
     }
 
-    private Map<String,byte[]> files_content= new HashMap<String,byte[]>();
 
     public ArrayList<String> getNames() {
         return names;

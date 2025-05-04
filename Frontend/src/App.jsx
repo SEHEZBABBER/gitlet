@@ -10,6 +10,7 @@ import NewRepo from "./Pages/NewRepo";
 import Repo from "./Pages/Repo";
 import Profile from "./Pages/Profile";
 import MyRepos from "./Pages/MyRepos";
+import History from "./Pages/History";
 function App() {
   return (
     <>
@@ -20,10 +21,11 @@ function App() {
           <Route element={<Register />} path="/Register" />
           <Route element={<Chill />} path="/Chill" />
           <Route element={<Home />} path="/home" />
-          <Route element={<Commits/>} path="/commits"/>
+          <Route element={<Commits/>} path="/commits/:id"/>
+          <Route element={<Repo/>} path="/repo/:id"/>
+          <Route element={<History/>} path="/repo/:id/history"/>
           <Route element={<NewRepo/>} path="/new"/>
           <Route element={<Profile/>} path="/profile"/>
-          <Route element={<Repo/>} path="/repo"/>
           <Route element={<MyRepos/>} path="/myrepos"/>
         </Routes>
       </BrowserRouter>

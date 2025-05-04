@@ -185,3 +185,40 @@ app.get('/search',async(req,res)=>{
   }
   res.status(200).json({message:arr});
 })
+app.get("/getrepodata/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const temp_repo = await Repo.findOne({ _id: id });
+
+    if (!temp_repo || !temp_repo.commitFile?.data) {
+      return res.status(404).json({
+        success: false,
+        message: "❌ Commit data not found for this repo.",
+      });
+    }
+
+    const buffer = temp_repo.commitFile.data;
+    const jsonString = buffer.toString();
+
+    let parsedJSON;
+    try {
+      parsedJSON = JSON.parse(jsonString); // assuming it was stored as JSON string
+    } catch (err) {
+      return res.status(500).json({
+        success: false,
+        message: "❌ Failed to parse commit data as JSON.",
+      });
+    }
+
+    return res.json({
+      success: true,
+      data: parsedJSON,
+    });
+  } catch (err) {
+    console.error("❌ Error:", err);
+    return res.status(500).json({
+      success: false,
+      message: "❌ Internal server error.",
+    });
+  }
+});

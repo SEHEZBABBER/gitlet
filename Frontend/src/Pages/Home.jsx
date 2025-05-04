@@ -101,6 +101,7 @@ function Home() {
       .get("http://localhost:8080/getallrepos")
       .then((res) => {
         let arr = sort_random(res.data.message);
+        console.log(arr);
         setPublicRepos(arr);
       })
       .catch((err) => {
@@ -219,7 +220,7 @@ function Home() {
                     <div className="d-flex justify-content-between align-items-center">
                       <div>
                         <h5 className="mb-1">
-                          <Link to={`/repo/${repo.id}`} className="text-decoration-none">
+                          <Link to={`/repo/${repo._id}`} className="text-decoration-none">
                             <span>Owner: {repo.owner}</span><br />
                             <span>Repo Name: {repo.name}</span>
                           </Link>

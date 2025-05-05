@@ -54,7 +54,7 @@ function Repo() {
         <div className="alert alert-warning">
           <strong>⚠️ {error}</strong>
           <p className="mt-2">
-            Use <code>java -jar push.jar &lt;repoId&gt;</code> to push your
+            Use <code>java -jar push.jar {id}</code> to push your
             commits.
           </p>
         </div>
